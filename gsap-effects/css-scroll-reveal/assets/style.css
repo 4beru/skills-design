@@ -1,0 +1,412 @@
+/* CSS Scroll Reveal - demo styles.
+   A small studio page on a neutral grey ground, one ink, one accent, Mona
+   Sans. The reveal classes at the bottom of this file are the reusable API;
+   everything above them is only the demo's page and can be replaced. */
+
+* {
+	box-sizing: border-box;
+	margin: 0;
+	padding: 0;
+}
+
+:root {
+	color-scheme: light;
+
+	--page: #ececeb;
+	--surface: #f7f7f6;
+	--surface-sunk: #e2e2e0;
+	--ink: #141412;
+	--ink-dim: rgba(20, 20, 18, 0.72);
+	--ink-faint: rgba(20, 20, 18, 0.64);
+	--rule: rgba(20, 20, 18, 0.14);
+	--rule-strong: rgba(20, 20, 18, 0.3);
+
+	/* One accent: the growing rule, the prompt mark, the one button, the
+	   focus ring and ::selection. */
+	--accent: #2563eb;
+	--accent-ink: #ffffff;
+
+	--font-sans: 'Mona Sans', 'Inter', system-ui, -apple-system, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+	--ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
+	/* Scroll-scrubbed reveals want a gentler curve than a timed tween: with an
+	   expo ease the element is 90% settled a third of the way in and the
+	   stagger between neighbours vanishes. */
+	--ease-reveal: cubic-bezier(0.22, 0.61, 0.36, 1);
+
+	--gutter: clamp(20px, 5vw, 72px);
+}
+
+html {
+	background: var(--page);
+	/* Side slides translate off the page for a moment; clip so they never
+	   widen the scroll area on a phone. */
+	overflow-x: clip;
+}
+
+body {
+	min-width: 320px;
+	background: var(--page);
+	color: var(--ink);
+	font-family: var(--font-sans);
+	line-height: 1.5;
+	overflow-x: clip;
+	-webkit-font-smoothing: antialiased;
+	-moz-osx-font-smoothing: grayscale;
+}
+
+::selection {
+	background: var(--accent);
+	color: var(--accent-ink);
+}
+
+:focus-visible {
+	outline: 2px solid var(--accent);
+	outline-offset: 3px;
+}
+
+/* ============================================
+   PAGE
+   ============================================ */
+.page {
+	width: min(100%, 1120px);
+	margin: 0 auto;
+	padding: 0 var(--gutter) var(--gutter);
+}
+
+/* Opening. Sized so the first card row straddles the fold of the product
+   iframe and is caught mid-reveal in the very first frame. */
+.intro {
+	display: grid;
+	grid-template-rows: auto minmax(0, 1fr) auto;
+	gap: clamp(16px, 3vh, 32px);
+	min-height: 79svh;
+	padding-top: var(--gutter);
+	padding-bottom: clamp(20px, 4vh, 40px);
+}
+
+.masthead,
+.card-index,
+.card-meta,
+.colophon {
+	font-size: 0.8125rem;
+	font-weight: 500;
+	line-height: 1.4;
+	color: var(--ink-faint);
+}
+
+.masthead {
+	display: flex;
+	justify-content: space-between;
+	gap: 1rem;
+}
+
+.masthead span:first-child {
+	color: var(--ink);
+}
+
+.headline {
+	align-self: center;
+	max-width: 14ch;
+	font-size: clamp(2.25rem, 6.4vw, 5rem);
+	font-weight: 600;
+	line-height: 1;
+	letter-spacing: -0.04em;
+}
+
+/* The one prompt line. */
+.prompt {
+	display: flex;
+	align-items: center;
+	gap: 0.5rem;
+	font-size: 0.8125rem;
+	line-height: 1.35;
+	color: var(--ink-faint);
+}
+
+.prompt strong {
+	color: var(--ink);
+	font-weight: 500;
+}
+
+.prompt-dot {
+	flex: 0 0 auto;
+	width: 0.4rem;
+	height: 0.4rem;
+	border-radius: 50%;
+	background: var(--accent);
+}
+
+/* ============================================
+   PROJECT INDEX
+   ============================================ */
+.projects {
+	display: grid;
+	grid-template-columns: repeat(3, minmax(0, 1fr));
+	gap: clamp(12px, 1.6vw, 20px);
+}
+
+.card {
+	display: grid;
+	gap: 0.5rem;
+	padding: clamp(18px, 2vw, 28px);
+	background: var(--surface);
+	border: 1px solid var(--rule);
+	border-radius: 10px;
+}
+
+.card-title {
+	margin-top: clamp(14px, 2.4vh, 28px);
+	font-size: clamp(1.375rem, 2.4vw, 1.875rem);
+	font-weight: 600;
+	line-height: 1.05;
+	letter-spacing: -0.03em;
+}
+
+/* Three ranges so the cards arrive one after another instead of as a block.
+   These only tune where each reveal starts and settles. */
+.projects .card:nth-child(1) { --reveal-range: entry 0% cover 34%; }
+.projects .card:nth-child(2) { --reveal-range: entry 6% cover 40%; }
+.projects .card:nth-child(3) { --reveal-range: entry 12% cover 46%; }
+
+/* ============================================
+   ABOUT
+   ============================================ */
+.about {
+	display: grid;
+	grid-template-columns: repeat(2, minmax(0, 1fr));
+	column-gap: clamp(24px, 4vw, 64px);
+	row-gap: clamp(20px, 3vh, 32px);
+	/* Each block gets most of a screen to itself. A scroll-driven reveal is
+	   only legible when the visitor scrolls it into view; with the sections
+	   packed tight the whole page was 750px of runway inside the product
+	   frame, so one wheel flick finished the demo and the page took over. */
+	padding-top: clamp(96px, 52svh, 420px);
+}
+
+.section-title {
+	grid-column: 1 / -1;
+	max-width: 20ch;
+	font-size: clamp(1.75rem, 4vw, 3rem);
+	font-weight: 600;
+	line-height: 1.05;
+	letter-spacing: -0.035em;
+}
+
+/* The secondary channel: a rule that draws itself as it enters. Pure CSS,
+   documented in the README. */
+.accent-rule {
+	grid-column: 1 / -1;
+	height: 3px;
+	background: var(--accent);
+	transform-origin: left center;
+	animation: rule-grow auto var(--ease-reveal) both;
+	animation-timeline: view();
+	animation-range: entry 10% cover 35%;
+}
+
+.about-lead {
+	font-size: clamp(1.25rem, 2.2vw, 1.75rem);
+	font-weight: 500;
+	line-height: 1.25;
+	letter-spacing: -0.02em;
+}
+
+.about-body {
+	max-width: 42ch;
+	font-size: clamp(1rem, 1.3vw, 1.125rem);
+	color: var(--ink-dim);
+}
+
+/* ============================================
+   CLOSING + COLOPHON
+   ============================================ */
+.closing {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	gap: 1.5rem;
+	flex-wrap: wrap;
+	margin-top: clamp(96px, 48svh, 400px);
+	padding: clamp(24px, 3vw, 40px);
+	background: var(--surface);
+	border: 1px solid var(--rule);
+	border-radius: 10px;
+}
+
+/* The last blocks on a page can never travel 40% of the viewport before the
+   scroll runs out, so their ranges finish sooner. */
+.closing { --reveal-range: entry 0% cover 28%; }
+.colophon { --reveal-range: entry 0% entry 100%; }
+
+.closing-text {
+	font-size: clamp(1.375rem, 2.6vw, 2rem);
+	font-weight: 600;
+	line-height: 1.1;
+	letter-spacing: -0.03em;
+}
+
+.btn {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	padding: 0.7rem 1.25rem;
+	font: inherit;
+	font-size: 0.9375rem;
+	font-weight: 500;
+	color: var(--ink);
+	text-decoration: none;
+	background: transparent;
+	border: 1px solid var(--rule-strong);
+	border-radius: 6px;
+	cursor: pointer;
+	transition: background-color 0.2s var(--ease-out-expo), border-color 0.2s var(--ease-out-expo);
+}
+
+.btn--filled {
+	color: var(--accent-ink);
+	background: var(--accent);
+	border-color: var(--accent);
+}
+
+.btn--filled:hover,
+.btn--filled:focus-visible {
+	background: color-mix(in srgb, var(--accent) 85%, #000);
+	border-color: color-mix(in srgb, var(--accent) 85%, #000);
+}
+
+.colophon {
+	margin-top: clamp(64px, 34svh, 300px);
+	padding-top: 1rem;
+	border-top: 1px solid var(--rule);
+}
+
+/* ============================================
+   THE REVEAL API
+   Copy from here down into your own stylesheet. Add one class to any element;
+   set --reveal-range on it to change where the reveal starts and settles.
+   ============================================ */
+.reveal-fade,
+.reveal-slide-up,
+.reveal-scale,
+.reveal-slide-left,
+.reveal-slide-right {
+	animation-duration: auto;
+	animation-timing-function: var(--ease-reveal, cubic-bezier(0.22, 0.61, 0.36, 1));
+	animation-fill-mode: both;
+	animation-timeline: view();
+	animation-range: var(--reveal-range, entry 0% cover 40%);
+	will-change: opacity, transform;
+}
+
+.reveal-fade { animation-name: fade-in; }
+.reveal-slide-up { animation-name: slide-up; }
+.reveal-scale { animation-name: scale-in; }
+.reveal-slide-left { animation-name: slide-left; }
+.reveal-slide-right { animation-name: slide-right; }
+
+@keyframes fade-in {
+	from { opacity: 0; }
+	to { opacity: 1; }
+}
+
+@keyframes slide-up {
+	from { opacity: 0; transform: translateY(4rem); }
+	to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes scale-in {
+	from { opacity: 0; transform: scale(0.72); }
+	to { opacity: 1; transform: scale(1); }
+}
+
+@keyframes slide-left {
+	from { opacity: 0; transform: translateX(-4rem); }
+	to { opacity: 1; transform: translateX(0); }
+}
+
+@keyframes slide-right {
+	from { opacity: 0; transform: translateX(4rem); }
+	to { opacity: 1; transform: translateX(0); }
+}
+
+@keyframes rule-grow {
+	from { opacity: 0; transform: scaleX(0); }
+	to { opacity: 1; transform: scaleX(1); }
+}
+
+/* ============================================
+   RESPONSIVE
+   ============================================ */
+@media (max-width: 720px) {
+	.intro {
+		grid-template-rows: auto auto auto;
+		gap: 28px;
+		min-height: 0;
+		padding-bottom: 28px;
+	}
+
+	.projects,
+	.about {
+		grid-template-columns: minmax(0, 1fr);
+	}
+
+	.projects .card:nth-child(n) { --reveal-range: entry 0% cover 34%; }
+
+	.prompt span:last-child {
+		display: none;
+	}
+}
+
+/* ============================================
+   REDUCED MOTION + FALLBACK
+   Reduced motion and browsers without scroll-driven animations both get the
+   settled page: every reveal visible, nothing moving.
+   ============================================ */
+@media (prefers-reduced-motion: reduce) {
+	*,
+	*::before,
+	*::after {
+		animation-duration: 0.01ms !important;
+		animation-delay: 0ms !important;
+		transition-duration: 0.01ms !important;
+		scroll-behavior: auto !important;
+	}
+
+	.accent-rule,
+	.reveal-fade,
+	.reveal-slide-up,
+	.reveal-scale,
+	.reveal-slide-left,
+	.reveal-slide-right {
+		animation: none !important;
+		opacity: 1 !important;
+		transform: none !important;
+	}
+}
+
+@supports not (animation-timeline: view()) {
+	.accent-rule,
+	.reveal-fade,
+	.reveal-slide-up,
+	.reveal-scale,
+	.reveal-slide-left,
+	.reveal-slide-right {
+		animation: none;
+		opacity: 1;
+		transform: none;
+	}
+}
+
+/* Same fallback, applied by the optional script for browsers whose @supports
+   answer is wrong. */
+.no-scroll-timeline .accent-rule,
+.no-scroll-timeline .reveal-fade,
+.no-scroll-timeline .reveal-slide-up,
+.no-scroll-timeline .reveal-scale,
+.no-scroll-timeline .reveal-slide-left,
+.no-scroll-timeline .reveal-slide-right {
+	animation: none;
+	opacity: 1;
+	transform: none;
+	will-change: auto;
+}

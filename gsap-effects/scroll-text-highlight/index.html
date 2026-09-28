@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Scroll Text Highlight Demo | GSAP Vault</title>
+    <link rel="stylesheet" href="assets/style.css">
+</head>
+<body>
+    <main class="reading-sequence" data-reading-sequence data-thumbnail-target>
+        <section class="reading-stage" aria-label="Scroll-controlled editorial statement">
+            <header class="stage-meta" aria-hidden="true">
+                <p class="scroll-cue"><span></span>Scroll to read</p>
+            </header>
+
+            <p class="scroll-highlight manifesto"
+               data-highlight-dim="0.3"
+               data-highlight-lift="8"
+               data-highlight-trigger="[data-reading-sequence]"
+               data-highlight-progress="[data-reading-progress]"
+               data-highlight-current="[data-reading-current]">
+                Attention is not captured. It is chosen. Read deliberately, one word at a time, until the noise falls away and meaning has nowhere left to hide.
+            </p>
+
+            <footer class="reading-coordinate" aria-hidden="true">
+                <span class="coordinate-label">Reading sequence</span>
+                <span class="progress-track"><span class="progress-fill" data-reading-progress></span></span>
+                <span class="coordinate-count" data-reading-current>26 / 26</span>
+            </footer>
+        </section>
+    </main>
+
+    <script src="https://cdn.jsdelivr.net/npm/gsap@3.15.0/dist/gsap.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/gsap@3.15.0/dist/ScrollTrigger.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/gsap@3.15.0/dist/SplitText.min.js"></script>
+    <script src="https://unpkg.com/lenis@1.3.17/dist/lenis.min.js"></script>
+    <script src="assets/script.js"></script>
+</body>
+</html>

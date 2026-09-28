@@ -1,0 +1,272 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+:root {
+    /* A page you read, because that is what a reading highlight is for. The
+       word under the reader takes the accent; the word just behind it takes
+       the softer second colour, so the eye can see the sequence move. */
+    --page: #f4f2ec;
+    --surface: #ffffff;
+    --text: #17171a;
+    --muted: rgba(23, 23, 26, 0.55);
+    --lime: #2f5bd7;    /* names kept so the script's data attributes still read */
+    --orange: #b8532a;
+    --accent: var(--lime);
+    --highlight-edge: var(--orange);
+    color-scheme: light;
+}
+
+html {
+    scroll-behavior: auto;
+    background: var(--page);
+}
+
+body {
+    min-width: 320px;
+    background: var(--page);
+    color: var(--text);
+    font-family: system-ui, -apple-system, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+    overflow-x: clip;
+    -webkit-font-smoothing: antialiased;
+}
+
+::selection {
+    background: var(--accent);
+    color: #fff;
+}
+
+::-webkit-scrollbar-thumb {
+    background: #30362a;
+    border: 2px solid var(--black);
+    border-radius: 99px;
+}
+
+.reading-sequence {
+    min-height: 100svh;
+}
+
+.has-scroll-highlight .reading-sequence {
+    height: 225svh;
+}
+
+.reading-stage {
+    position: sticky;
+    top: 0;
+    display: grid;
+    grid-template-rows: auto 1fr auto;
+    width: 100%;
+    height: 100svh;
+    min-height: 34rem;
+    padding: clamp(2rem, 5vh, 3.75rem) clamp(1.25rem, 5vw, 5.5rem);
+    overflow: hidden;
+    isolation: isolate;
+}
+
+.stage-meta,
+.reading-coordinate {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    color: var(--muted);
+    font-size: clamp(0.75rem, 0.92vw, 0.85rem);
+    font-weight: 400;
+}
+
+.scroll-cue {
+    display: flex;
+    align-items: center;
+    gap: 0.65rem;
+    color: var(--text);
+}
+
+.scroll-cue span {
+    width: 0.48rem;
+    height: 0.48rem;
+    background: var(--accent);
+    border-radius: 50%;
+}
+
+.manifesto {
+    align-self: center;
+    width: calc(100% - clamp(1rem, 6vw, 7rem));
+    min-width: 0;
+    max-width: 15.5ch;
+    margin-left: clamp(1rem, 6vw, 7rem);
+    color: var(--text);
+    /* Cap display type by viewport height as well as width so the complete
+       statement still fits inside short, wide product iframes. */
+    font-size: clamp(2.9rem, min(6.25vw, 8vh), 6.35rem);
+    font-weight: 600;
+    line-height: 1.0;
+    letter-spacing: -0.035em;
+    text-wrap: balance;
+}
+
+.sh-word {
+    position: relative;
+    display: inline-block;
+    will-change: transform;
+}
+
+/* An unread word shows a ghost preview and hides its real text. The ghost is
+   generated content painted from data-mark, so there is only ever one text
+   node per word; the real text sits in the same box and becomes visible at
+   full ink as the reading front arrives. Both rules are gated on the class
+   the script adds, so without JavaScript the statement reads plainly. */
+.has-scroll-highlight .sh-word[data-mark]::before {
+    content: attr(data-mark);
+    position: absolute;
+    top: 0;
+    left: 0;
+    color: var(--text);
+    opacity: var(--sh-ghost, var(--sh-dim, 0.16));
+    white-space: pre;
+    pointer-events: none;
+}
+
+.has-scroll-highlight .sh-word__text {
+    visibility: hidden;
+    will-change: opacity, color;
+}
+
+.reading-coordinate {
+    display: grid;
+    grid-template-columns: auto minmax(6rem, 1fr) auto;
+    width: 100%;
+    min-width: 0;
+    padding-left: clamp(1rem, 6vw, 7rem);
+}
+
+.progress-track {
+    position: relative;
+    height: 1px;
+    overflow: hidden;
+    background: rgba(23, 23, 26, 0.18);
+}
+
+.progress-fill {
+    position: absolute;
+    inset: -1px 0;
+    background: linear-gradient(90deg, var(--lime) 0 calc(100% - 0.65rem), var(--orange) 100%);
+    transform: scaleX(1);
+    transform-origin: left center;
+}
+
+.coordinate-count {
+    min-width: 4.8rem;
+    color: var(--text);
+    text-align: right;
+}
+
+/* Build-only frozen reading-front state used by thumbnail.html. */
+.thumbnail-page {
+    overflow: hidden;
+}
+
+.thumbnail-page .reading-sequence {
+    height: 100vh;
+}
+
+.thumbnail-page .reading-stage {
+    height: 100vh;
+}
+
+.thumbnail-page .sh-word.is-complete {
+    color: var(--text);
+    opacity: 1;
+}
+
+.thumbnail-page .sh-word.is-edge {
+    color: var(--orange);
+    opacity: 1;
+    transform: translateY(-0.18em);
+}
+
+.thumbnail-page .sh-word.is-active {
+    color: var(--lime);
+    opacity: 1;
+    transform: translateY(-0.28em);
+}
+
+.thumbnail-page .sh-word.is-unread {
+    opacity: 0.22;
+}
+
+.thumbnail-page .progress-fill {
+    transform: scaleX(0.48);
+}
+
+@media (max-width: 700px) {
+    .has-scroll-highlight .reading-sequence {
+        height: 185svh;
+    }
+
+    .reading-stage {
+        min-height: 30rem;
+        padding: 1.8rem 1.1rem 2rem;
+    }
+
+    .coordinate-label {
+        display: none;
+    }
+
+    .manifesto {
+        width: calc(100% - 0.85rem);
+        max-width: 14ch;
+        margin-left: 0.85rem;
+        font-size: clamp(1.85rem, min(9.8vw, 5.6vh), 3.35rem);
+        line-height: 0.98;
+        letter-spacing: -0.048em;
+        text-wrap: pretty;
+    }
+
+    .reading-coordinate {
+        grid-template-columns: minmax(0, 1fr) auto;
+        padding-left: 0.85rem;
+    }
+}
+
+@media (max-height: 620px) and (min-width: 701px) {
+    .reading-stage {
+        min-height: 0;
+    }
+
+    .manifesto {
+        font-size: clamp(2.5rem, 7.5vh, 4.6rem);
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+    }
+
+    .reading-sequence {
+        height: 100svh;
+    }
+
+    .scroll-highlight,
+    .sh-word,
+    .sh-word__text {
+        color: var(--text) !important;
+        opacity: 1 !important;
+        visibility: visible !important;
+        transform: none !important;
+    }
+
+    .sh-word::before {
+        content: none !important;
+    }
+
+    .progress-fill {
+        transform: scaleX(1) !important;
+    }
+}

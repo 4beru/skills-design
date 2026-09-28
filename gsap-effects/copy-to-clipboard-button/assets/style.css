@@ -1,0 +1,245 @@
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+/* ---------------------------------------------------------------------
+   Themes. One design at two token values: `light` and `dark`, selected
+   with data-variant on <body> in this demo, or on any wrapper around the
+   component in your own page.
+
+   Every colour, radius and font the component uses is a custom property
+   here, and so is every colour the demo's ground uses, so one attribute
+   flips both. The script never hard-codes a colour: the value flash and
+   the pill backgrounds are read from --code-flash, --code-bg, --pill-ok-bg
+   and --pill-err-bg with getComputedStyle at the moment each tween starts,
+   so a theme swap mid-demo stays correct.
+   --------------------------------------------------------------------- */
+body,
+body[data-variant="light"] {
+  color-scheme: light;
+
+  /* the ground */
+  --ground: #f2f2f1;
+  --ground-2: #e9e9e7;
+  --raised: #fbfbfa;
+  --hover: #e2e2df;
+  --ink: #141412;
+  --ink-2: #4b4b47;
+  --ink-3: #676762;
+  --line: rgba(20, 20, 18, 0.12);
+  --line-strong: rgba(20, 20, 18, 0.22);
+  --shadow: 0 1px 2px rgba(20, 20, 18, 0.06), 0 4px 12px rgba(20, 20, 18, 0.06);
+  --font: 'Inter', system-ui, -apple-system, sans-serif;
+  --font-code: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  --radius: 10px;
+  --radius-sm: 6px;
+  --radius-xs: 4px;
+
+  --accent: #6d4cff;
+  --accent-ink: #ffffff;
+
+  /* the copyable value */
+  --code-bg: #f0f0ee;
+  --code-fg: #2b2b28;
+  --code-flash: #d2e0d9;
+  --code-size: 0.8125rem;
+
+  /* the button */
+  --btn-bg: #f0f0ee;
+  --btn-hover: #e5e5e2;
+  --btn-fg: #4b4b47;
+  --btn-line: var(--line-strong);
+  --btn-ok-fg: #1a7f5a;
+  --btn-err-fg: #b4231f;
+
+  /* the pill */
+  --pill-ok-bg: #1a7f5a;
+  --pill-ok-fg: #ffffff;
+  --pill-err-bg: #b4231f;
+  --pill-err-fg: #ffffff;
+
+  --sel-bg: var(--accent);
+  --sel-fg: var(--accent-ink);
+  --focus: var(--accent);
+}
+
+body[data-variant="dark"] {
+  color-scheme: dark;
+
+  --ground: #141414;
+  --ground-2: #0f0f0f;
+  --raised: #1c1c1c;
+  --hover: #232323;
+  --ink: #f1efea;
+  --ink-2: #c9c7c1;
+  --ink-3: #9a988f;
+  --line: rgba(241, 239, 234, 0.12);
+  --line-strong: rgba(241, 239, 234, 0.22);
+  --shadow: 0 1px 2px rgba(0, 0, 0, 0.4), 0 8px 24px rgba(0, 0, 0, 0.4);
+
+  --accent: #6d4cff;
+  --accent-ink: #ffffff;
+
+  --code-bg: #232323;
+  --code-fg: #d8d6d0;
+  --code-flash: #24382f;
+
+  --btn-bg: #262626;
+  --btn-hover: #303030;
+  --btn-fg: #c9c7c1;
+  --btn-ok-fg: #55c08c;
+  --btn-err-fg: #f08b84;
+
+  --pill-ok-bg: #2a5c45;
+  --pill-ok-fg: #d8f3e5;
+  --pill-err-bg: #5c2a27;
+  --pill-err-fg: #ffd9d5;
+}
+
+html { overflow-x: clip; }
+
+body {
+  min-height: 100svh;
+  background: var(--ground);
+  color: var(--ink);
+  font-family: var(--font);
+  font-size: 0.875rem;
+  line-height: 1.45;
+  -webkit-font-smoothing: antialiased;
+  padding-top: 44px;                 /* the demo toolbar strip */
+}
+
+::selection { background: var(--sel-bg); color: var(--sel-fg); }
+
+/* ---------- Demo furniture: the ground the component sits on ---------- */
+.stage { min-height: calc(100svh - 44px); display: grid; place-items: center; padding: 32px 20px; }
+.stage__inner { width: 100%; max-width: 640px; display: flex; flex-direction: column; gap: 16px; }
+
+.cp-sr-only {
+  position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px;
+  overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; border: 0;
+}
+
+/* ---------- The component ----------
+   .cp-block is the unit the script initialises: one name, one copyable
+   value, one button. Everything around it (the panel, the heading, the
+   list) is layout you own. */
+.cp-panel {
+  background: var(--raised);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+}
+
+.cp-panel__head { padding: 14px 16px 12px; border-bottom: 1px solid var(--line); }
+.cp-panel__title { font-size: 0.875rem; font-weight: 600; letter-spacing: -0.006em; color: var(--ink); }
+.cp-panel__note { margin-top: 3px; font-size: 0.75rem; color: var(--ink-3); }
+
+.cp-list { list-style: none; }
+.cp-list > li + li { border-top: 1px solid var(--line); }
+
+.cp-block {
+  display: grid;
+  grid-template-columns: 116px minmax(0, 1fr) auto;
+  grid-template-areas: "name value copy";
+  align-items: center;
+  gap: 12px;
+  min-height: 56px;
+  padding: 10px 16px;
+}
+
+.cp-field { padding: 14px 16px; grid-template-columns: minmax(0, 1fr) auto; grid-template-areas: "value copy"; }
+
+.cp-name { grid-area: name; font-size: 0.8125rem; font-weight: 500; color: var(--ink); }
+.cp-meta { display: block; font-size: 0.6875rem; font-weight: 400; color: var(--ink-3); }
+
+/* The value. A <pre><code> because it is code: a key, a token, a URL. */
+.cp-pre {
+  grid-area: value;
+  min-width: 0;
+  background: var(--code-bg);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-sm);
+  padding: 6px 10px;
+  overflow: hidden;
+}
+
+.cp-code {
+  display: block;
+  font-family: var(--font-code);
+  font-size: var(--code-size);
+  line-height: 1.4;
+  color: var(--code-fg);
+  white-space: pre;
+  overflow-x: auto;
+  scrollbar-width: none;
+  -webkit-font-smoothing: auto;
+}
+.cp-code::-webkit-scrollbar { display: none; }
+.cp-code::selection { background: var(--sel-bg); color: var(--sel-fg); }
+
+/* The button, and the pill pinned above it. .cp-copy must stay positioned:
+   the pill is absolute inside it. */
+.cp-copy { grid-area: copy; position: relative; display: inline-flex; }
+
+.cp-btn {
+  display: inline-flex; align-items: center; justify-content: center; gap: 6px;
+  min-height: 34px; min-width: 104px; padding: 0 12px;
+  border: 1px solid var(--btn-line);
+  border-radius: var(--radius-sm);
+  background: var(--btn-bg);
+  color: var(--btn-fg);
+  font: inherit; font-size: 0.8125rem; font-weight: 500;
+  cursor: pointer;
+  transition: background-color 0.15s ease, color 0.15s ease, border-color 0.15s ease;
+}
+@media (hover: hover) {
+  .cp-btn:hover { background: var(--btn-hover); color: var(--ink); }
+}
+.cp-btn:focus-visible { outline: 2px solid var(--focus); outline-offset: 2px; }
+.cp-btn.is-copied { color: var(--btn-ok-fg); border-color: var(--btn-ok-fg); }
+.cp-btn.is-error { color: var(--btn-err-fg); border-color: var(--btn-err-fg); }
+
+/* The one primary action on the page wears the accent. */
+.cp-btn--primary { background: var(--accent); border-color: var(--accent); color: var(--accent-ink); }
+@media (hover: hover) {
+  .cp-btn--primary:hover { background: var(--accent); border-color: var(--accent); color: var(--accent-ink); filter: brightness(1.08); }
+}
+.cp-btn--primary.is-copied { background: var(--pill-ok-bg); border-color: var(--pill-ok-bg); color: var(--pill-ok-fg); }
+.cp-btn--primary.is-error { background: var(--pill-err-bg); border-color: var(--pill-err-bg); color: var(--pill-err-fg); }
+
+/* Both icons are stacked in one 17px box: that is what makes the swap read
+   as one object changing rather than two elements toggling. */
+.cp-icon { position: relative; width: 17px; height: 17px; flex: 0 0 auto; }
+.cp-clip,
+.cp-check { position: absolute; left: 0; top: 0; color: currentColor; }
+.cp-check { opacity: 0; }
+.cp-btn-label { display: inline-block; }
+
+.cp-pill {
+  position: absolute; right: 0; bottom: calc(100% + 8px); z-index: 3;
+  padding: 3px 8px; border-radius: var(--radius-xs);
+  font-size: 0.6875rem; font-weight: 500; line-height: 1.4;
+  white-space: nowrap; pointer-events: none; opacity: 0;
+  background: var(--pill-ok-bg); color: var(--pill-ok-fg);
+  box-shadow: var(--shadow);
+}
+
+.cp-status { font-size: 0.75rem; color: var(--ink-3); min-height: 1.2em; padding: 0 2px; }
+
+/* ---------- Phone ---------- */
+@media (max-width: 560px) {
+  .cp-block {
+    grid-template-columns: minmax(0, 1fr) auto;
+    grid-template-areas:
+      "name copy"
+      "value value";
+    row-gap: 8px;
+    align-items: center;
+  }
+  .cp-field { grid-template-areas: "value value" "copy copy"; }
+  .cp-field .cp-copy { justify-self: stretch; }
+  .cp-field .cp-btn { width: 100%; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .cp-btn { transition: none; }
+}

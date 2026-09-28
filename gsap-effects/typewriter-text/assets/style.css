@@ -1,0 +1,102 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+:root {
+    --page: #ececeb;
+    --surface: #f7f7f6;
+    --ink: #141412;
+    --ink-dim: rgba(20, 20, 18, 0.72);
+    --rule: rgba(20, 20, 18, 0.14);
+    --rule-strong: rgba(20, 20, 18, 0.3);
+
+    /* The caret is the thing the effect moves: it carries the accent. */
+    --accent: #e5322d;
+    --accent-ink: #ffffff;
+
+    color-scheme: light;
+}
+
+html {
+    background: var(--page);
+}
+
+body {
+    min-width: 320px;
+    background: var(--page);
+    color: var(--ink);
+    font-family: 'Inter', system-ui, sans-serif;
+    -webkit-font-smoothing: antialiased;
+    line-height: 1.4;
+}
+
+::selection {
+    background: var(--accent);
+    color: var(--accent-ink);
+}
+
+:focus-visible {
+    outline: 2px solid var(--accent);
+    outline-offset: 3px;
+}
+
+/* Full-bleed ground, one line, nothing else. */
+.stage {
+    display: grid;
+    place-items: center;
+    min-height: 100svh;
+    padding: clamp(1.25rem, 6vw, 5rem);
+}
+
+.line {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: min(64rem, 100%);
+    min-width: 0;
+    font-size: clamp(1.75rem, 5.5vw, 3.5rem);
+    font-weight: 500;
+    letter-spacing: -0.03em;
+    line-height: 1.1;
+    white-space: nowrap;
+}
+
+/* The script measures every phrase before it types, so the line stays hidden
+   until it is fitted rather than flashing at its unfitted size. */
+.has-js:not(.typewriter-ready) .line {
+    visibility: hidden;
+}
+
+.typewriter__cursor {
+    display: inline-block;
+    flex: 0 0 auto;
+    width: 0.08em;
+    height: 1em;
+    margin-left: 0.14em;
+    background: var(--accent);
+    animation: type-cursor 0.75s steps(1) infinite;
+}
+
+@keyframes type-cursor {
+    50% { opacity: 0; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+    }
+
+    .has-js .line {
+        visibility: visible;
+    }
+
+    .typewriter__cursor {
+        display: none;
+    }
+}
